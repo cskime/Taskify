@@ -28,7 +28,7 @@ import { getCard } from "@/features/card/apis/mock";
 import CardEditSheet from "@/features/card/components/card-edit-sheet";
 import Dropdown, { DropdownOption } from "@/features/card/components/dropdown";
 import ImageInput from "@/features/card/components/image-input";
-import { Direction, Menu, MenuItem } from "@/features/card/components/menu";
+import { Menu, MenuItem } from "@/features/card/components/menu";
 import TagInput from "@/features/card/components/tag-input";
 import ColumnEditSheet from "@/features/column/components/column-edit-sheet";
 import { getMembers } from "@/features/member/apis/mock";
@@ -822,7 +822,7 @@ function MenuSample() {
   return (
     <div style={{ display: "flex", gap: "100px" }}>
       <Menu items={items}>Menu on Left</Menu>
-      <Menu items={items} direction={Direction.Right}>
+      <Menu items={items} direction="right">
         Menu on Right
       </Menu>
     </div>

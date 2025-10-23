@@ -1,7 +1,7 @@
 import Card from "@/components/dashboard/card/card";
 import SettingSvg from "@/components/icon/setting-svg";
 import Typography from "@/components/typography";
-import { Direction, Menu, MenuItem } from "@/features/card/components/menu";
+import { Menu, MenuItem } from "@/features/card/components/menu";
 import { Card as CardData } from "@/types/card";
 import { classnames } from "@/utils/classnames";
 import { useEffect, useRef } from "react";
@@ -52,7 +52,7 @@ export default function Column({
       {
         threshold: 0.1,
         rootMargin: "100px",
-      },
+      }
     );
 
     observer.observe(observerRef.current);
@@ -89,12 +89,12 @@ export default function Column({
                 MenuItem.edit(() => onClick?.(ColumnActionType.Modify)),
                 MenuItem.delete(() => onClick?.(ColumnActionType.Delete)),
               ]}
-              direction={Direction.Right}
+              direction="right"
             >
               <SettingSvg
                 className={classnames(
                   styles.columnEditIcon,
-                  styles.columnTitleButton,
+                  styles.columnTitleButton
                 )}
               />
             </Menu>

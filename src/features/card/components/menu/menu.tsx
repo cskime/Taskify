@@ -3,17 +3,12 @@ import { classnames } from "@/utils/classnames";
 import { PropsWithChildren, ReactNode, useState } from "react";
 import styles from "./menu.module.css";
 
-export enum Direction {
-  Left = "directionLeft",
-  Right = "directionRight",
-}
-
 interface Props extends PropsWithChildren {
   items: ReactNode[];
-  direction?: Direction;
+  direction?: "left" | "right";
 }
 
-export function Menu({ items, children, direction = Direction.Left }: Props) {
+export function Menu({ items, children, direction = "left" }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const targetRef = useBackdropClick<HTMLDivElement>({
     callback: () => setIsOpen(false),

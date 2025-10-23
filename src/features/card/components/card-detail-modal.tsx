@@ -10,12 +10,13 @@ import Profile from "@/components/profile/profile";
 import { ProfileSize } from "@/components/profile/profile-size";
 import Typography from "@/components/typography";
 import { CardParams, deleteCard, updateCard } from "@/features/card/apis";
-import { Direction, Menu, MenuItem } from "@/features/card/components/menu";
+import { Menu, MenuItem } from "@/features/card/components/menu";
 import CommentSection from "@/features/comment/components/comment-section";
 import { useAlert } from "@/hooks/use-alert";
 import { useDialog } from "@/hooks/use-dialog";
 import { useModal } from "@/hooks/use-modal";
 import { useSheet } from "@/hooks/use-sheet";
+import { useSsrResponsive } from "@/hooks/use-ssr-responsive";
 import type { Card, Column, Dashboard, MemberInfo } from "@/types";
 import { classnames } from "@/utils/classnames";
 import { formatDueDate } from "@/utils/date-formatter";
@@ -23,7 +24,6 @@ import Image from "next/image";
 import { ReactNode, useState } from "react";
 import styles from "./card-detail-modal.module.css";
 import CardEditSheet from "./card-edit-sheet";
-import { useSsrResponsive } from "@/hooks/use-ssr-responsive";
 
 interface ActionsProps {
   onEdit: () => void;
@@ -36,7 +36,7 @@ function Actions({ onEdit, onDelete, onClose }: ActionsProps) {
     <div className={styles.actions}>
       <Menu
         items={[MenuItem.edit(onEdit), MenuItem.delete(onDelete)]}
-        direction={Direction.Right}
+        direction="right"
       >
         <MoreIcon color={Color.Gray300} />
       </Menu>
@@ -167,7 +167,7 @@ function Main({
           <h2
             className={classnames(
               isDesktop ? "" : styles.compact,
-              Typography.xl2SemiBold,
+              Typography.xl2SemiBold
             )}
           >
             {card.title}
@@ -189,7 +189,7 @@ function Main({
             <div
               className={classnames(
                 styles.imageContainer,
-                imageState.isPortrait ? styles.portrait : styles.landscape,
+                imageState.isPortrait ? styles.portrait : styles.landscape
               )}
             >
               <Image
