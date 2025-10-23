@@ -25,45 +25,6 @@ export default function Modal({
 
   const isRootModal = modalStack.length === 0 || modalStack[0] === modalKey;
 
-  function modalClassName() {
-    const base = styles.modal;
-
-    if (!isRootModal) {
-      return classnames(base, styles.transparent);
-    }
-
-    let className;
-    if (isOpenModal) {
-      const modalNode = modalRef.current;
-      const hadNestedModal = modalNode?.className.split(" ").includes("nested");
-      className = hadNestedModal ? "nested" : styles.open;
-    } else {
-      const hasNestedModal = modalStack.length > 1;
-      className = hasNestedModal ? "nested" : styles.close;
-    }
-
-    return classnames(base, className);
-  }
-
-  function contentClassName() {
-    const base = classnames(
-      styles.content,
-      isFullScreen ? styles.fullscreen : ""
-    );
-
-    if (isRootModal) {
-      if (isOpenModal) {
-        return base;
-      } else {
-        return modalStack.includes(modalKey)
-          ? styles.closeWithoutAnimation
-          : "";
-      }
-    }
-
-    return classnames(base, isOpenModal ? styles.open : styles.close);
-  }
-
   const handleAnimationEnd = () => {
     if (isOpenModal) return;
     onCloseModal();
@@ -79,17 +40,90 @@ export default function Modal({
 
   const modal = (
     <div
-      className={modalClassName()}
+      className={modalClassName({
+        isRootModal,
+        isOpenModal,
+        modalStack,
+        modalRef,
+      })}
       style={{ zIndex }}
       onAnimationEnd={handleAnimationEnd}
       onClick={handleClick}
       ref={modalRef}
     >
-      <div className={contentClassName()} onClick={handleContentClick}>
+      <div
+        className={contentClassName({
+          isRootModal,
+          isOpenModal,
+          isFullScreen,
+          modalStack,
+          modalKey,
+        })}
+        onClick={handleContentClick}
+      >
         {children}
       </div>
     </div>
   );
 
   return createPortal(modal, document.getElementById("modal-root")!);
+}
+
+function modalClassName({
+  isRootModal,
+  isOpenModal,
+  modalStack,
+  modalRef,
+}: {
+  isRootModal: boolean;
+  isOpenModal: boolean;
+  modalStack: string[];
+  modalRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const base = styles.modal;
+
+  if (!isRootModal) {
+    return classnames(base, styles.transparent);
+  }
+
+  let className;
+  if (isOpenModal) {
+    const modalNode = modalRef.current;
+    const hadNestedModal = modalNode?.className.split(" ").includes("nested");
+    className = hadNestedModal ? "nested" : styles.open;
+  } else {
+    const hasNestedModal = modalStack.length > 1;
+    className = hasNestedModal ? "nested" : styles.close;
+  }
+
+  return classnames(base, className);
+}
+
+function contentClassName({
+  isRootModal,
+  isOpenModal,
+  isFullScreen,
+  modalStack,
+  modalKey,
+}: {
+  isRootModal: boolean;
+  isOpenModal: boolean;
+  isFullScreen: boolean;
+  modalStack: string[];
+  modalKey: string;
+}) {
+  const base = classnames(
+    styles.content,
+    isFullScreen ? styles.fullscreen : ""
+  );
+
+  if (!isRootModal) {
+    return classnames(base, isOpenModal ? styles.open : styles.close);
+  }
+
+  if (isOpenModal) {
+    return base;
+  } else {
+    return modalStack.includes(modalKey) ? styles.closeWithoutAnimation : "";
+  }
 }
