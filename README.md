@@ -65,7 +65,7 @@
 - 문제 상황
   - TypeScript 코드에서 responsive UI 구성을 위해 `@uidotdev/usehooks` package의 `useMediaQuery`를 활용한 [`useResponsive` custom hook](https://github.com/Codeit-FE18-Part3-Team4/Taskify/blob/develop/src/hooks/use-responsive.tsx) 구현
   - Modal 컴포넌트에서는 정상적으로 사용 가능했지만, page 컴포넌트에서 사용하면 "useMediaQuery is a client-only hook" error 발생
-    <br><img src="image.png" /><br>
+    <br><img src="/docs/images/image-01.png" /><br>
 - 문제 원인
   - Next.js 서버에서 page가 pre-rendering 될 때, `useMediaQuery` 내부에서 `matchMedia` Web API를 사용하여 발생하는 문제
   - `@uidotdev/usehooks` package는 `useSyncExternalStore` hook을 사용하여 server에서 실행될 때 해당 error를 throw 하는 것을 확인 ([source code](https://github.com/uidotdev/usehooks/blob/945436df0037bc21133379a5e13f1bd73f1ffc36/index.js#L785-L807))
