@@ -4,6 +4,7 @@
 
 - 코드잇 스프린트 FE 18기 과정에서 2주간 진행한 두 번째 팀 프로젝트
 - 주제 선정 이유
+  - '그룹 별로 할 일들을 분류하고 관리한다'는 본질적인 기능에 집중하여 누구나 쉽고 단순하게 사용할 수 있는 할 일 관리 도구 개발
   - GitHub project, Jira 등 평소에 자주 사용하는 kanban board 를 실제로 구현해 보는 경험
   - 높은 난이도의 프로젝트에 도전
 - 배우지 않은 기술과 외부 라이브러리 사용을 최소화하고 필요한 기능들을 가능한 직접 구현하며 학습한 기술들의 숙련도 향상에 초점을 맞추어 진행
@@ -11,22 +12,12 @@
 ## 사용 기술
 
 - Next.js(page router)
-  - Pre-rendering을 통한 FCP 개선을 위해 도입
-  - Next.js의 API routes를 http only cookie 관리를 위한 proxy server로 활용
 - TypeScript
-  - Type safe한 코드 작성을 위해 도입
 - CSS modules
-  - CSS-in-JS 방식의 styled-components와 성능 및 개발 경험을 비교해보기 위해 CSS-in-CSS 방식의 CSS modules 도입
-  - 프로젝트 규모가 작아서 유의미한 성능 차이는 없었지만, 동적 스타일링이 필요한 상황에서 CSS-in-JS의 장점이 돋보임
-  - 다른 프로젝트에서는 'Vanilla Extract' 등 Zero-runtime CSS-in-JS 라이브러리를 사용해봐도 좋을 것 같다.
 - Axios
-  - Fetch API 대신 팀원들에게 더 익숙한 axios 사용
 - Vercel
-  - 배포에 소요되는 시간을 최소화하기 위해 쉽고 간단하게 배포할 수 있는 Vercel 사용
-- GitHub Actions
-  - GitHub 조직 계정의 repository를 Vercel에 무료 tier로 배포하기 위해 개인 repository로 push하여 우회하는 workflow 작성
 
-## 담당 역할 및 개발 내용
+## 역할 및 성과
 
 ### Modal 공통 컴포넌트 개발
 
@@ -39,13 +30,17 @@
 - 성과
   - `Modal` 공통 컴포넌트를 독립적으로 개발하여 `Dialog`, `Alert`, `Sheet` 등 다양한 형태의 modal을 빠르게 개발할 수 있었음
   - 다른 팀원들도 필요에 따라 modal UI를 빠르게 구현하고 기능 개발에 집중할 수 있었음
-- 아쉬운 점
-  - Animation으로 닫히는 modal을 구현하기 위해 mount와 animation 두 가지 상태를 사용하여 복잡도가 높아짐
-  - 상탯값 1개만 사용하여 복잡도를 낮추는 방향으로 개선해 볼 예정
+  - Modal의 mount 상태와 animation 상태를 분리하여 중첩 modal을 자연스럽게 구현하는 등 세밀한 customizing 가능
+
+### CSS modules 사용 제안
+
+- 프로젝트 팀장으로서 이전에 학습했던 CSS-in-JS 방식의 styled-components와 성능 및 개발 경험을 비교해보기 위해 CSS-in-CSS 방식의 CSS modules 도입
+- 프로젝트 규모가 작아서 유의미한 성능 차이는 없었지만, 동적 스타일링이 필요한 상황에서 CSS-in-JS의 장점이 돋보임
+- CSS-in-JS의 장점을 살리면서 성능 문제를 해결할 수 있는 zero-runtime CSS-in-JS 라이브러리를 사용해봐도 좋을 것 같다.
 
 ### 코드 리뷰
 
-- 목표ㄴ
+- 목표
   - 잠재적인 버그나 잘못 구현된 코드가 병합되지 않도록 방지
   - 팀원들이 서로의 코드를 리뷰하며 현업에서 다른 개발자들과 협업하는 과정을 간접적으로 경험
 - 활동
@@ -80,15 +75,13 @@
 
 - 문제 상황
   - 실습 API 서버는 만료 기간이 없는 access token만 제공하고 refresh token은 제공하지 않음
-  - Access token을 외부에 노출시키지 않고 관리할 수 있는 방법 필요
+  - 탈취당한 access token을 갱신할 방법이 없으므로, access token을 외부에 노출시키지 않고 관리할 수 있는 방법 필요
 - 해결 방법
-  - Next.js의 API routes 기능을 활용한 proxy 서버 사용
-  - Proxy 서버를 통해 로그인 요청을 보내면 실습 API 서버가 반환하는 access token을 `HttpOnly`, `Secure`, `SameSite=strict` 설정된 cookie로 저장
-  - Dynamic catch all API routes를 활용하여 모든 API 요청을 proxy 서버로 보내고, 실제 API 서버로 요청을 보낼 때 `Authorization` header에 token을 담아서 전송
+  - Next.js의 API routes 기능을 활용하여 proxy 서버로 사용
+  - Proxy 서버를 통해 로그인 요청을 보내면 실제 API 서버가 반환하는 access token을 `HttpOnly`, `Secure`, `SameSite=strict` cookie로 저장
+  - Dynamic catch all API routes를 활용하여 proxy 서버로 보내는 모든 요청을 실제 API 서버로 전달
+  - Proxy에서 실제 API 서버로 보내는 요청의 `Authorization` header에 token을 담아서 전송
 - 성과
-  - `HttpOnly` cookie에 저장하고 사용하여 XSS 공격에 대응
-  - `Secure`, `SameSite=strict` 설정을 통해 CSRF 공격에 대응
-  - Access token이 브라우저를 통해 외부로 노출되지 않음
-- 아쉬운 점
-  - 모든 API 요청이 proxy 서버를 경유해야 하므로 리소스를 더 많이 사용해야 함
-  - 보안 문제를 해결하기 위해 access token과 refresh token을 함께 사용하는 시나리오를 경험해 보지 못함
+  - Access token을 `HttpOnly` cookie로 저장하여 XSS 공격에 대응
+  - Cookie를 `Secure`, `SameSite=strict` 설정하여 CSRF 공격에 대응
+  - Access token이 Next.js 서버에서만 다뤄지므로 브라우저를 통해 외부로 노출되지 않음
