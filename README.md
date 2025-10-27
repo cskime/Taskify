@@ -77,11 +77,13 @@
   - 실습 API 서버는 만료 기간이 없는 access token만 제공하고 refresh token은 제공하지 않음
   - 탈취당한 access token을 갱신할 방법이 없으므로, access token을 외부에 노출시키지 않고 관리할 수 있는 방법 필요
 - 해결 방법
-  - Next.js의 API routes 기능을 활용하여 proxy 서버로 사용
+  - Dynamic API routes 기능을 활용하여 Next.js 서버를 API proxy로 사용
+    - [로그인 요청 proxy](https://github.com/cskime/Taskify/blob/portfolio/src/pages/api/auth/login.ts)
+    - [기타 API 요청 proxy](https://github.com/cskime/Taskify/blob/portfolio/src/pages/api/%5B...slug%5D.ts)
+  - Client는 실제 API endpoint 앞에 `/api`를 붙여서 요청
   - Proxy 서버를 통해 로그인 요청을 보내면 실제 API 서버가 반환하는 access token을 `HttpOnly`, `Secure`, `SameSite=strict` cookie로 저장
-  - Dynamic catch all API routes를 활용하여 proxy 서버로 보내는 모든 요청을 실제 API 서버로 전달
-  - Proxy에서 실제 API 서버로 보내는 요청의 `Authorization` header에 token을 담아서 전송
+  - Proxy에서 [실제 API 서버로 보내는 요청의 `Authorization` header에 token을 담아서 전송](https://github.com/cskime/Taskify/blob/portfolio/src/services/proxy-client.ts)
 - 성과
   - Access token을 `HttpOnly` cookie로 저장하여 XSS 공격에 대응
   - Cookie를 `Secure`, `SameSite=strict` 설정하여 CSRF 공격에 대응
-  - Access token이 Next.js 서버에서만 다뤄지므로 브라우저를 통해 외부로 노출되지 않음
+  - Client가 access token을 직접 관리하지 않으므로 브라우저를 통해 외부로 노출되지 않음
