@@ -1,18 +1,17 @@
-import { useAuthEffect } from "@/features/auth/components/auth-provider";
 import {
   deleteDashboard,
   getDashboardById,
   getDashboards,
 } from "@/features/my-dashboard/api/";
 import { Dashboard } from "@/types/dashboard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function useDashboard() {
   const [dashboards, setDashboards] = useState<Dashboard[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  useAuthEffect(() => {
+  useEffect(() => {
     const loadDashboards = async () => {
       setIsLoading(true);
       setError(null);
@@ -21,7 +20,7 @@ export function useDashboard() {
         const res = await getDashboards();
         const sortedDashboards = (res?.dashboards ?? []).sort(
           (a: Dashboard, b: Dashboard) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         setDashboards(sortedDashboards);
       } catch (e) {
@@ -64,7 +63,7 @@ export function useDashboardById(dashboardId: number | null) {
     }
   };
 
-  useAuthEffect(() => {
+  useEffect(() => {
     loadDashboard(dashboardId);
   }, [dashboardId]);
 

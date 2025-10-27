@@ -1,4 +1,4 @@
-import axiosInstance from "@/services/axios-instance";
+import axios from "axios";
 
 interface MembersProps {
   size: number;
@@ -10,8 +10,8 @@ export async function getMembers({ size, page, dashboardId }: MembersProps) {
   if (!dashboardId) return [];
 
   try {
-    const res = await axiosInstance.get(
-      `/members??page=${page}&size=${size}&dashboardId=${dashboardId}`,
+    const res = await axios.get(
+      `/api/members??page=${page}&size=${size}&dashboardId=${dashboardId}`
     );
     return res.data;
   } catch (e) {
@@ -28,8 +28,8 @@ export async function getDashboardInvitees({
   if (!dashboardId) return [];
 
   try {
-    const res = await axiosInstance.get(
-      `/dashboards/${dashboardId}/invitations?page=${page}&size=${size}`,
+    const res = await axios.get(
+      `/api/dashboards/${dashboardId}/invitations?page=${page}&size=${size}`
     );
     return res.data;
   } catch (e) {
@@ -40,7 +40,7 @@ export async function getDashboardInvitees({
 
 export async function deleteDashboardMember(memberId: number) {
   try {
-    return await axiosInstance.delete(`/members/${memberId}`);
+    return await axios.delete(`/api/members/${memberId}`);
   } catch (e) {
     console.error(e);
     throw e;
@@ -55,7 +55,7 @@ export async function cancelDashboardInviete({
   invitationId: number;
 }) {
   try {
-    return axiosInstance.delete(`/dashboards/${dashboardId}/invitations/${invitationId}
+    return axios.delete(`/api/dashboards/${dashboardId}/invitations/${invitationId}
 `);
   } catch (e) {
     console.error(e);

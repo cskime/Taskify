@@ -5,7 +5,6 @@ import Input, { InputSize, InputVariant } from "@/components/input/input";
 import Profile from "@/components/profile/profile";
 import { ProfileSize } from "@/components/profile/profile-size";
 import Sheet, { SheetActionType } from "@/components/sheet";
-import { useAuthEffect } from "@/features/auth/components/auth-provider";
 import { changeUserdata } from "@/features/user/apis/change-userdata";
 import { getMe, GetMeResponse } from "@/features/user/apis/get-me";
 import { uploadProfileImage } from "@/features/user/apis/upload-profile-image";
@@ -20,7 +19,7 @@ import styles from "./profile-setting-modal.module.css";
 const ACCOUNT_SETTING_MODAL_KEY = "ACCOUNT_SETTING_MODAL";
 const PASSWORD_CHANGE_MODAL_KEY = "PASSWORD_CHANGE_MODAL";
 
-export default function AccountSettingModal({ zIndex }: { zIndex: boolean }) {
+export default function AccountSettingModal() {
   const {
     isShowModal: isShowPasswordChangeModal,
     openModal: openPasswordChangeModal,
@@ -38,7 +37,7 @@ export default function AccountSettingModal({ zIndex }: { zIndex: boolean }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
 
-  useAuthEffect(() => {
+  useEffect(() => {
     if (!isShowModal) return;
 
     async function loadUserData() {

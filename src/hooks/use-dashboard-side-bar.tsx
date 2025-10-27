@@ -1,8 +1,7 @@
-import { useAuthEffect } from "@/features/auth/components/auth-provider";
 import { getDashboards, getUserInfo } from "@/features/my-dashboard/api/";
 import { useDashboardContext } from "@/features/my-dashboard/dashboard-provider";
 import { Dashboard, UserInfo } from "@/types/my-dashboard";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const PAGE_SIZE = 10;
 
@@ -35,7 +34,7 @@ export function useDashboardSidebar() {
     }
   }, []);
 
-  useAuthEffect(() => {
+  useEffect(() => {
     loadDashboards(currentSidebarPage);
   }, [loadDashboards, currentSidebarPage]);
 

@@ -1,18 +1,12 @@
 import axiosInstance from "@/services/axios-instance";
+import { type User } from "@/types/user";
 import axios from "axios";
 import { serialize } from "cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-interface LoginSuccess {
+interface LoginResponse {
   accessToken: string;
-  user: {
-    id: number;
-    email: string;
-    nickname: string;
-    profileImageUrl: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
+  user: User;
 }
 
 export default async function handler(
@@ -22,27 +16,26 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
+
   try {
-    const response = await axiosInstance.post<LoginSuccess>(
+    const response = await axiosInstance.post<LoginResponse>(
       "/auth/login",
       req.body
     );
-    const data: LoginSuccess = response.data;
-    if (data.accessToken) {
-      const cookie = serialize("accessToken", data.accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-        maxAge: 60 * 60 * 24, // 1 day
-      });
-      res.setHeader("Set-Cookie", cookie);
-      return res
-        .status(201)
-        .json({ accessToken: data.accessToken, user: data.user });
+
+    if (response.status !== 201) {
+      return res.status(response.status).json(response.data);
     }
 
-    return res.status(401).json({ message: "Login failed" });
+    const cookie = serialize("accessToken", response.data.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+    res.setHeader("Set-Cookie", cookie);
+    return res.status(201).json(response.data.user);
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
       const { status, data } = error.response;

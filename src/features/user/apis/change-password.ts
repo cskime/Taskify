@@ -1,4 +1,4 @@
-import axiosInstance from "@/services/axios-instance";
+import axios from "axios";
 
 interface ChangePasswordRequest {
   password: string;
@@ -12,6 +12,6 @@ interface ChangePasswordResponse {
 export async function changePassword(
   body: ChangePasswordRequest
 ): Promise<ChangePasswordResponse> {
-  const response = await axiosInstance.put("/auth/password", body);
+  const response = await axios.put("/api/auth/password", body);
   return response.data;
 }

@@ -1,4 +1,4 @@
-import { Invitation } from "@/types/my-dashboard";
+import { Invitation } from "@/types/invitation";
 import { useMemo, useState } from "react";
 
 export function useInvitationSearch(invitations: Invitation[]) {

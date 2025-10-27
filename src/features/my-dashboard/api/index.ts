@@ -1,4 +1,5 @@
-import axiosInstance from "@/services/axios-instance";
+import { Invitation } from "@/types/invitation";
+import axios from "axios";
 
 interface PostDashboardProps {
   title: string;
@@ -16,10 +17,10 @@ export async function getDashboardById({
   dashboardId: number;
 }) {
   try {
-    const res = await axiosInstance.get(`/dashboards/${dashboardId}`);
+    const res = await axios.get(`/api/dashboards/${dashboardId}`);
     return res.data;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 }
@@ -34,13 +35,13 @@ export async function updateDashboard({
   dashboardId,
 }: UpdateDashboardProps) {
   try {
-    const res = await axiosInstance.put(`/dashboards/${dashboardId}`, {
+    const res = await axios.put(`/api/dashboards/${dashboardId}`, {
       title,
       color,
     });
     return res;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 }
@@ -50,21 +51,25 @@ export async function getDashboards({
   size = 10,
 }: { page?: number; size?: number } = {}) {
   try {
-    const res = await axiosInstance.get(
-      `/dashboards?navigationMethod=pagination&page=${page}&size=${size}`,
+    const res = await axios.get(
+      `/api/dashboards?navigationMethod=pagination&page=${page}&size=${size}`
     );
     const body = res.data;
     return body;
-  } catch (e) {
-    console.error(e);
-    throw e;
+  } catch {
+    return [];
   }
+}
+
+export interface GetInvitationsResponse {
+  cursorId: number;
+  invitations: Invitation[];
 }
 
 export async function getInvitations({
   size = 10,
   cursorId,
-}: { size?: number; cursorId?: number } = {}) {
+}: { size?: number; cursorId?: number } = {}): Promise<GetInvitationsResponse> {
   try {
     const params = new URLSearchParams();
     params.append("size", size.toString());
@@ -72,17 +77,17 @@ export async function getInvitations({
       params.append("cursorId", cursorId.toString());
     }
 
-    const res = await axiosInstance.get(`/invitations?${params}`);
+    const res = await axios.get(`/api/invitations?${params}`);
     const body = res.data;
     return body;
-  } catch (e) {
-    console.error(e);
+  } catch {
+    return { cursorId: 0, invitations: [] };
   }
 }
 
 export async function getUserInfo() {
   try {
-    const res = await axiosInstance.get("/users/me");
+    const res = await axios.get("/api/users/me");
     const body = res.data;
     return body;
   } catch (e) {
@@ -92,7 +97,7 @@ export async function getUserInfo() {
 
 export async function postDashboard({ title, color }: PostDashboardProps) {
   try {
-    const res = await axiosInstance.post(`/dashboards`, {
+    const res = await axios.post(`/api/dashboards`, {
       title,
       color,
     });
@@ -108,7 +113,7 @@ export async function putInvitationsAccepts({
   inviteAccepted,
 }: putInvitationsAcceptsProps) {
   try {
-    const res = await axiosInstance.put(`/invitations/${invitationsId}`, {
+    const res = await axios.put(`/api/invitations/${invitationsId}`, {
       inviteAccepted,
     });
     const body = res.data;
@@ -120,10 +125,10 @@ export async function putInvitationsAccepts({
 
 export async function deleteDashboard(dashboardId: number) {
   try {
-    const res = await axiosInstance.delete(`/dashboards/${dashboardId}`);
+    const res = await axios.delete(`/api/dashboards/${dashboardId}`);
     return res;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 }
@@ -136,11 +141,11 @@ export async function inviteUserByEmail({
   dashboardId: number;
 }) {
   try {
-    return await axiosInstance.post(`dashboards/${dashboardId}/invitations`, {
+    return await axios.post(`/api/dashboards/${dashboardId}/invitations`, {
       email,
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 }

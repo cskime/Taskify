@@ -1,4 +1,4 @@
-import axiosInstance from "@/services/axios-instance";
+import axios from "axios";
 
 export interface GetMeResponse {
   id: number;
@@ -10,6 +10,6 @@ export interface GetMeResponse {
 }
 
 export async function getMe(): Promise<GetMeResponse> {
-  const reponse = await axiosInstance.get("/users/me");
-  return reponse.data;
+  const response = await axios.get("/api/users/me");
+  return response.data;
 }

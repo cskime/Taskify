@@ -1,4 +1,4 @@
-import axiosInstance from "@/services/axios-instance";
+import axios from "axios";
 
 interface SignupRequest {
   email: string;
@@ -16,6 +16,6 @@ interface SignupResponse {
 }
 
 export async function signup(body: SignupRequest): Promise<SignupResponse> {
-  const response = await axiosInstance.post("/users", body);
+  const response = await axios.post("/api/users", body);
   return response.data;
 }

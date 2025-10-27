@@ -1,4 +1,4 @@
-import axiosInstance from "@/services/axios-instance";
+import axios from "axios";
 
 interface CardProps {
   columnId: number;
@@ -20,7 +20,7 @@ export async function getCards({ columnId, size, cursorId }: CardProps) {
       params.append("cursorId", cursorId.toString());
     }
 
-    const res = await axiosInstance.get(`/cards?${params.toString()}`);
+    const res = await axios.get(`/api/cards?${params.toString()}`);
     return res.data;
   } catch (e) {
     console.error(e);

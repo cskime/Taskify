@@ -1,5 +1,3 @@
-import axiosInstance from "@/services/axios-instance";
-import { withThrowingAxiosError } from "@/services/with-throwing-axios-error";
 import { Comment } from "@/types";
 
 interface GetCommentsResponse {
@@ -10,13 +8,14 @@ interface GetCommentsResponse {
 export async function getComments(params: {
   cardId: number;
   cursorId?: number;
-}) {
-  return withThrowingAxiosError(async () => {
-    const response = await axiosInstance.get<GetCommentsResponse>(`/comments`, {
-      params,
-    });
-    return response.data;
-  });
+}): Promise<GetCommentsResponse> {
+  const searchParams = new URLSearchParams();
+  searchParams.append("cardId", params.cardId.toString());
+  if (params.cursorId) {
+    searchParams.append("cursorId", params.cursorId.toString());
+  }
+  const response = await fetch(`/api/comments?${searchParams}`);
+  return response.json();
 }
 
 export async function createComment({
@@ -29,8 +28,10 @@ export async function createComment({
     content: string;
   };
 }) {
-  return withThrowingAxiosError<Comment>(async () => {
-    const response = await axiosInstance.post<Comment>(`/comments`, params);
-    return response.data;
+  const response = await fetch(`/api/comments`, {
+    method: "POST",
+    body: JSON.stringify(params),
   });
+  const data = await response.json();
+  return data;
 }

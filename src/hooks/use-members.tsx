@@ -1,14 +1,13 @@
-import { useAuthEffect } from "@/features/auth/components/auth-provider";
 import { inviteUserByEmail } from "@/features/my-dashboard/api";
 import {
-  getMembers,
-  getDashboardInvitees,
-  deleteDashboardMember,
   cancelDashboardInviete,
+  deleteDashboardMember,
+  getDashboardInvitees,
+  getMembers,
 } from "@/features/navigation-bar/api/members";
-import { Invitations } from "@/types/dashboard-invitations";
+import { Invitation } from "@/types/invitation";
 import { MemberInfo } from "@/types/member-info";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface MembersProps {
   dashboardId: number | null;
@@ -23,7 +22,7 @@ export function useMembers({ dashboardId, page = 1, size = 6 }: MembersProps) {
   const [error, setError] = useState<Error | null>(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
-  const loadMembers = async () => {
+  const loadMembers = useCallback(async () => {
     if (!dashboardId) {
       setMembers(null);
       setTotalCount(0);
@@ -45,11 +44,11 @@ export function useMembers({ dashboardId, page = 1, size = 6 }: MembersProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [dashboardId, page, size]);
 
-  useAuthEffect(() => {
+  useEffect(() => {
     loadMembers();
-  }, [dashboardId, page, size, refetchTrigger]);
+  }, [loadMembers, refetchTrigger]);
 
   const refetch = () => setRefetchTrigger((prev) => prev + 1);
 
@@ -62,14 +61,14 @@ export function useDashboardInvitees({
   size = 6,
 }: MembersProps) {
   const [dashboardInvitations, setDashboardInvitations] = useState<
-    Invitations[] | null
+    Invitation[] | null
   >(null);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
-  const loadInvitees = async () => {
+  const loadInvitees = useCallback(async () => {
     if (!dashboardId) {
       setDashboardInvitations(null);
       setTotalCount(0);
@@ -91,7 +90,7 @@ export function useDashboardInvitees({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [dashboardId, page, size]);
 
   const inviteUser = async (email: string) => {
     if (!dashboardId) return;
@@ -113,9 +112,9 @@ export function useDashboardInvitees({
     }
   };
 
-  useAuthEffect(() => {
+  useEffect(() => {
     loadInvitees();
-  }, [dashboardId, page, size, refetchTrigger]);
+  }, [loadInvitees, refetchTrigger]);
 
   const refetch = () => {
     setRefetchTrigger((prev) => prev + 1);
@@ -136,7 +135,7 @@ export function useDeleteDashboardMember(refetch: () => void) {
   const [error, setError] = useState<Error | null>(null);
 
   const removeMember = async (
-    memberId: number,
+    memberId: number
   ): Promise<{ success: boolean; message: string }> => {
     setError(null);
     setSuccess(false);

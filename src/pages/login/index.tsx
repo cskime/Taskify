@@ -5,7 +5,6 @@ import Dialog from "@/components/dialog";
 import Input, { InputSize, InputVariant } from "@/components/input/input";
 import Typography from "@/components/typography";
 import { login } from "@/features/auth/apis/login";
-import { auth } from "@/features/auth/components/auth-provider";
 import { useDialog } from "@/hooks/use-dialog";
 import { validateEmail, validatePassword } from "@/utils/validator";
 import { AxiosError } from "axios";
@@ -79,8 +78,7 @@ export default function LoginPage() {
 
   const handleSubmit = async () => {
     try {
-      const response = await login({ email, password });
-      auth.token = response.accessToken;
+      await login({ email, password });
       router.push("/my-dashboard");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;

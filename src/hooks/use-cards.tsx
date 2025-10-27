@@ -1,7 +1,6 @@
 import { getCards } from "@/components/dashboard/card/api/cards";
-import { useAuthEffect } from "@/features/auth/components/auth-provider";
 import { Card } from "@/types/card";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type ColumnCardData = {
   cards: Card[];
@@ -30,7 +29,7 @@ export function useCards(columnIds: number[], size = 20) {
         }
 
         const cardsPromises = columnIds.map((columnId) =>
-          getCards({ columnId, size, cursorId: null }),
+          getCards({ columnId, size, cursorId: null })
         );
         const cardsDataList = await Promise.all(cardsPromises);
 
@@ -44,12 +43,12 @@ export function useCards(columnIds: number[], size = 20) {
             };
             return acc;
           },
-          {} as Record<number, ColumnCardData>,
+          {} as Record<number, ColumnCardData>
         );
 
         setColumnCardsData(cardsMap);
       } catch (e) {
-        console.log(e);
+        console.error(e);
         setError(e as Error);
         setColumnCardsData(null);
         throw e;
@@ -57,7 +56,7 @@ export function useCards(columnIds: number[], size = 20) {
         setIsLoading(false);
       }
     },
-    [columnIds, size],
+    [columnIds, size]
   );
 
   const loadMoreCards = useCallback(
@@ -96,10 +95,10 @@ export function useCards(columnIds: number[], size = 20) {
         setIsLoading(false);
       }
     },
-    [columnCardsData, size],
+    [columnCardsData, size]
   );
 
-  useAuthEffect(() => {
+  useEffect(() => {
     getCardData();
   }, [getCardData]);
 

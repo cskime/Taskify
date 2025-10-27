@@ -1,5 +1,3 @@
-import axiosInstance from "@/services/axios-instance";
-import { withThrowingAxiosError } from "@/services/with-throwing-axios-error";
 import { Card } from "@/types/card";
 
 export interface CardParams {
@@ -33,21 +31,26 @@ const dummyDate = () => {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
-export async function getCard({ cardId }: { cardId: number }) {
-  return withThrowingAxiosError<Card>(async () => {
-    const response = await axiosInstance.get<Card>(`/cards/${cardId}`);
-    return response.data;
-  });
+export async function getCard({ cardId }: { cardId: number }): Promise<Card> {
+  const response = await fetch(`/api/cards/${cardId}`);
+  const data = await response.json();
+  return data;
 }
 
-export async function createCard({ params }: { params: CreateCardParams }) {
-  return withThrowingAxiosError<Card>(async () => {
-    const response = await axiosInstance.post<Card>(`/cards`, {
+export async function createCard({
+  params,
+}: {
+  params: CreateCardParams;
+}): Promise<Card> {
+  const response = await fetch(`/api/cards`, {
+    method: "POST",
+    body: JSON.stringify({
       ...params,
       dueDate: dummyDate(),
-    });
-    return response.data;
+    }),
   });
+  const data = await response.json();
+  return data;
 }
 
 export async function updateCard({
@@ -56,19 +59,22 @@ export async function updateCard({
 }: {
   cardId: number;
   params: CardParams;
-}) {
-  return withThrowingAxiosError<Card>(async () => {
-    const response = await axiosInstance.put<Card>(`/cards/${cardId}`, {
+}): Promise<Card> {
+  const response = await fetch(`/api/cards/${cardId}`, {
+    method: "PUT",
+    body: JSON.stringify({
       ...params,
       dueDate: dummyDate(),
-    });
-    return response.data;
+    }),
   });
+  const data = await response.json();
+  return data;
 }
 
 export async function deleteCard({ cardId }: { cardId: number }) {
-  return withThrowingAxiosError<void>(async () => {
-    const response = await axiosInstance.delete(`/cards/${cardId}`);
-    return response.data;
+  const response = await fetch(`/api/cards/${cardId}`, {
+    method: "DELETE",
   });
+  const data = await response.json();
+  return data;
 }

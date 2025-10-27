@@ -1,16 +1,15 @@
+import CrownIcon from "@/assets/images/ic-crown.svg";
 import Button, { ButtonSize, ButtonVariant } from "@/components/button/button";
 import Profile from "@/components/profile/profile";
 import { ProfileSize } from "@/components/profile/profile-size";
-import { classnames } from "@/utils/classnames";
-import styles from "./user-list.module.css";
-import { Dashboard, MemberInfo } from "@/types";
-import { useEffect, useState } from "react";
-import { Invitations } from "@/types/dashboard-invitations";
-import { UserListType } from "./modify-members";
 import { getUserInfo } from "@/features/my-dashboard/api";
-import { useAuthEffect } from "@/features/auth/components/auth-provider";
-import CrownIcon from "@/assets/images/ic-crown.svg";
+import { Dashboard, MemberInfo } from "@/types";
+import { Invitation } from "@/types/invitation";
+import { classnames } from "@/utils/classnames";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { UserListType } from "./modify-members";
+import styles from "./user-list.module.css";
 
 enum ProfileType {
   Members,
@@ -20,12 +19,12 @@ enum ProfileType {
 
 interface UserListProps {
   members: MemberInfo[];
-  invitations: Invitations[];
+  invitations: Invitation[];
   onClickButton: (
     type: UserListType,
     id: number,
     nickName: string,
-    email?: string,
+    email?: string
   ) => void;
   createdByMe: boolean;
   dashboard: Dashboard;
@@ -46,12 +45,12 @@ export default function UserList({
   const [orderedMembers, setOrderedMembers] = useState<IsCreator[]>([]);
   const [profileType, setProfileType] = useState<ProfileType | null>(null);
 
-  useAuthEffect(() => {
+  useEffect(() => {
     (async () => {
       const { id } = await getUserInfo();
       setMyId(id);
     })();
-  });
+  }, []);
 
   useEffect(() => {
     let creatorId;
@@ -61,7 +60,7 @@ export default function UserList({
       creatorId = dashboard.userId;
     }
     const updated = members.map((member) =>
-      member.userId === creatorId ? { ...member, creator: true } : member,
+      member.userId === creatorId ? { ...member, creator: true } : member
     );
     setOrderedMembers(updated);
   }, [createdByMe, dashboard.userId, members, myId]);
@@ -114,7 +113,7 @@ export default function UserList({
                         onClickButton(
                           UserListType.Members,
                           member.id,
-                          member.nickname,
+                          member.nickname
                         )
                       }
                     >
@@ -139,7 +138,7 @@ export default function UserList({
                     UserListType.Invitees,
                     invitation.id,
                     invitation.invitee.nickname,
-                    invitation.invitee.email,
+                    invitation.invitee.email
                   )
                 }
               >

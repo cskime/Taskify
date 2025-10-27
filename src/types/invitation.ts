@@ -1,4 +1,4 @@
-export type Invitations = {
+export type Invitation = {
   id: number;
   inviter: {
     id: number;

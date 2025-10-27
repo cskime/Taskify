@@ -1,5 +1,3 @@
-import axiosInstance from "@/services/axios-instance";
-import { withThrowingAxiosError } from "@/services/with-throwing-axios-error";
 import { Column } from "@/types";
 
 export async function createColumn({
@@ -8,14 +6,19 @@ export async function createColumn({
 }: {
   dashboardId: number;
   title: string;
-}) {
-  return withThrowingAxiosError(async () => {
-    const response = await axiosInstance.post<Column>(`/columns`, {
+}): Promise<Column> {
+  const response = await fetch(`/api/columns`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       title,
       dashboardId,
-    });
-    return response.data;
+    }),
   });
+
+  return response.json();
 }
 
 export async function updateColumn({
@@ -24,13 +27,18 @@ export async function updateColumn({
 }: {
   columnId: number;
   title: string;
-}) {
-  return withThrowingAxiosError(async () => {
-    const response = await axiosInstance.put<Column>(`/columns/${columnId}`, {
+}): Promise<Column> {
+  const response = await fetch(`/api/columns/${columnId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       title,
-    });
-    return response.data;
+    }),
   });
+
+  return response.json();
 }
 
 export async function uploadCardImage({
@@ -40,26 +48,24 @@ export async function uploadCardImage({
   columnId: number;
   imageFile: File;
 }): Promise<string> {
-  return withThrowingAxiosError<string>(async () => {
-    const formData = new FormData();
-    formData.append("image", imageFile);
+  const formData = new FormData();
+  formData.append("image", imageFile);
 
-    const response = await axiosInstance.post<{ imageUrl: string }>(
-      `/columns/${columnId}/card-image`,
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-
-    if (response.status !== 201) {
-      return "";
-    }
-
-    return response.data.imageUrl;
+  const response = await fetch(`/api/columns/${columnId}/card-image`, {
+    method: "POST",
+    body: formData,
   });
+
+  if (response.status !== 201) {
+    return "";
+  }
+
+  const data = (await response.json()) as { imageUrl: string };
+  return data.imageUrl;
 }
 
 export async function deleteColumn({ columnId }: { columnId: number }) {
-  return withThrowingAxiosError(async () => {
-    await axiosInstance.delete(`/columns/${columnId}`);
+  await fetch(`/api/columns/${columnId}`, {
+    method: "DELETE",
   });
 }
